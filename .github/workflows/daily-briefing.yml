@@ -2,8 +2,8 @@ name: Daily Briefing
 
 on:
   schedule:
-    # Run at 23:00 Beijing time (15:00 UTC)
-    - cron: '0 15 * * *'
+    # Run at 08:00 Beijing time (00:00 UTC) - to read previous day's Obsidian sync
+    - cron: '0 0 * * *'
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
@@ -13,7 +13,13 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      
+      with:
+        fetch-depth: 0  # Need full history for Obsidian sync submodule
+        
+    - name: Checkout Obsidian Sync
+      run: |
+        git clone https://github.com/zhongyi-byte/obsidian-sync.git ../obsidian-sync
+        
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
@@ -23,23 +29,27 @@ jobs:
       run: |
         pip install requests pyyaml jinja2
         
-    - name: Generate briefing
+    - name: Generate briefing for previous day
       env:
         TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        python scripts/generate_briefing.py
+        # Generate briefing for previous day (yesterday)
+        python scripts/generate_briefing.py --date yesterday
         
     - name: Commit and push
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add -A
-        git commit -m "Update briefing for $(date +%Y-%m-%d)" || exit 0
+        # Use yesterday's date in commit message
+        YESTERDAY=$(date -d "yesterday" +%Y-%m-%d)
+        git commit -m "Add briefing for $YESTERDAY" || exit 0
         git push
         
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./briefings
+        publish_dir: ./docs
