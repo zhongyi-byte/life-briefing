@@ -1,0 +1,58 @@
+{
+  "user": {
+    "name": "zhongyi",
+    "startDate": "2026-02-04"
+  },
+  "targets": {
+    "sleep": { "min": 7, "max": 8, "unit": "hours" },
+    "exercise": { "min": 30, "unit": "minutes" },
+    "thinking": { "min": 500, "unit": "characters" },
+    "output": { "weekly": 1, "unit": "posts" }
+  },
+  "principles": [
+    {
+      "id": "app",
+      "name": "想法应用化",
+      "description": "每一个想法必须转化为可运行的应用",
+      "check": "今天有想法变成应用吗？"
+    },
+    {
+      "id": "margin",
+      "name": "余裕管理",
+      "description": "每天保留2小时无计划余裕时间",
+      "check": "今天保留2h余裕时间了吗？"
+    },
+    {
+      "id": "output",
+      "name": "公开输出",
+      "description": "每周至少1次公开输出",
+      "check": "本周有公开输出吗？"
+    }
+  ],
+  "today": {
+    "date": "2026-02-04",
+    "sleep": null,
+    "exercise": null,
+    "thinking": 2000,
+    "mood": "积极",
+    "principles": {
+      "app": true,
+      "margin": true,
+      "output": false
+    }
+  },
+  "weekly": {
+    "days": [
+      { "date": "2026-02-04", "sleep": 7.2, "exercise": 0, "thinking": 2000, "mood": "积极" }
+    ]
+  },
+  "monthly": {
+    "totalDays": 1,
+    "completedDays": 1,
+    "principleCompletion": {
+      "app": 1,
+      "margin": 1,
+      "output": 0
+    }
+  }
+}

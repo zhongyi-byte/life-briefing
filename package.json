@@ -1,0 +1,12 @@
+{
+  "name": "life-briefing",
+  "version": "1.0.0",
+  "description": "自动生活简报系统 - 追踪每日工作、思考、健康与成长",
+  "scripts": {
+    "generate": "python scripts/generate_briefing.py",
+    "serve": "python -m http.server 8080 --directory dashboard"
+  },
+  "keywords": ["life-tracking", "quantified-self", "personal-analytics", "journal"],
+  "author": "zhongyi",
+  "license": "MIT"
+}
