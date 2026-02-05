@@ -17,8 +17,10 @@ jobs:
         fetch-depth: 0  # Need full history for Obsidian sync submodule
         
     - name: Checkout Obsidian Sync
+      env:
+        OBSIDIAN_TOKEN: ${{ secrets.OBSIDIAN_TOKEN }}
       run: |
-        git clone https://github.com/zhongyi-byte/obsidian-sync.git ../obsidian-sync
+        git clone https://zhongyi-byte:${OBSIDIAN_TOKEN}@github.com/zhongyi-byte/obsidian-sync.git ../obsidian-sync
         
     - name: Set up Python
       uses: actions/setup-python@v5
