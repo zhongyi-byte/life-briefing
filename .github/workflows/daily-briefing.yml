@@ -11,6 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+    - name: Get yesterday's date
+      id: date
+      run: |
+        echo "yesterday=$(date -d 'yesterday' +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+        
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
@@ -55,3 +60,18 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./docs
+        
+    - name: Send Telegram Notification
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_CHAT_ID }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        message: |
+          📋 个人生活简报已生成
+          
+          日期: ${{ steps.date.outputs.yesterday }}
+          
+          📊 查看仪表盘: https://zhongyi-byte.github.io/life-briefing/
+          📄 查看简报: https://github.com/zhongyi-byte/life-briefing/tree/main/briefings
+          
+          记得记录今天的睡眠和运动数据哦！
