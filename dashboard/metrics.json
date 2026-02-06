@@ -41,6 +41,51 @@
       "output": false
     }
   },
+  "history": [
+    {
+      "date": "2026-02-04",
+      "mood": "neutral",
+      "moodText": "理性反思",
+      "principlesCount": 1,
+      "sleep": null,
+      "exercise": 0,
+      "thinking": 0,
+      "insights": [
+        "思考的价值在于收集信息、推断事实、找依据验证",
+        "投资反思：美股估值过高，向全球分散配置"
+      ],
+      "outputs": [
+        "投资思考: 全球资产配置策略调整",
+        "研究计划: 韩国/台湾市场 + 国内供应链隐形冠军"
+      ],
+      "briefing": "../briefings/2026/02/2026-02-04.md"
+    },
+    {
+      "date": "2026-02-05",
+      "mood": "negative",
+      "moodText": "反思与挫败感",
+      "principlesCount": 1,
+      "sleep": null,
+      "exercise": 0,
+      "thinking": 0,
+      "insights": [
+        "软件成本趋近于零，价值在于推理与科学研究",
+        "需要系统化交易原则，避免停滞"
+      ],
+      "outputs": [
+        "博客: 当软件成本趋近于零，什么才是真正有价值的？",
+        "投资思考: 全球化配置策略（韩国、台湾、贵金属）"
+      ],
+      "briefing": "../briefings/2026/02/2026-02-05.md"
+    }
+  ],
+  "weeklyBriefings": {
+    "2026-W06": {
+      "title": "第 6 周周简报",
+      "path": "../briefings/2026/weekly/2026-W06.md",
+      "summary": "聚焦投资研究与生活系统搭建，连续两天保持记录。"
+    }
+  },
   "weekly": {
     "days": [
       { "date": "2026-02-04", "sleep": 7.2, "exercise": 0, "thinking": 2000, "mood": "积极" }
