@@ -10,7 +10,7 @@
 
 ## 🚀 快速开始
 
-访问仪表盘: https://zhongyi-byte.github.io/life-briefing/dashboard/
+部署地址（GitHub Pages）: https://zhongyi-byte.github.io/life-briefing/
 
 ## 📊 追踪指标
 
