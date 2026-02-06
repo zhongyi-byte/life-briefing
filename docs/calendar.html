@@ -143,31 +143,59 @@
     <div id="tooltip" class="tooltip hidden"></div>
 
     <script>
-        // 示例数据 - 实际应该从简报文件加载
-        const dailyData = {
-            '2026-02-04': {
-                mood: 'neutral',
-                moodText: '理性反思',
-                principles: 2,
-                principlesText: '2/3 ⚠️',
-                sleep: null,
-                exercise: false,
-                insights: ['思考的价值在于收集信息、推断事实', '投资风格转变：美股→全球分散'],
-                outputs: ['投资思考: 全球资产配置策略']
-            },
-            '2026-02-05': {
-                mood: 'neutral',
-                moodText: '反思与挫败感',
-                principles: 1,
-                principlesText: '1/3 ⚠️',
-                sleep: null,
-                exercise: false,
-                insights: ['软件成本趋近于零，价值在于推理', '投资停滞、缺乏自律'],
-                outputs: ['博客文章已发布', 'OpenClaw配置完成']
-            }
-        };
-
+        let dailyData = {};
+        let weeklyBriefings = {};
         let currentView = 'mood';
+
+        const MS_PER_DAY = 86400000;
+        document.addEventListener('DOMContentLoaded', loadCalendarData);
+
+        async function loadCalendarData() {
+            try {
+                const res = await fetch('metrics.json');
+                const metrics = await res.json();
+                dailyData = buildDailyData(metrics.history || []);
+                weeklyBriefings = metrics.weeklyBriefings || {};
+            } catch (error) {
+                console.error('加载 metrics.json 失败，使用示例数据', error);
+                dailyData = getSampleData();
+                weeklyBriefings = {};
+            }
+
+            updateStats();
+            updateLegend(currentView);
+            generateCalendar();
+        }
+
+        function buildDailyData(history) {
+            const map = {};
+            history.forEach(day => {
+                const principles = typeof day.principlesCount === 'number'
+                    ? day.principlesCount
+                    : (day.principles ? Object.values(day.principles).filter(Boolean).length : 0);
+                const mood = normalizeMood(day.mood);
+                map[day.date] = {
+                    mood,
+                    moodText: day.moodText || day.mood || '未记录',
+                    principles,
+                    principlesText: `${principles}/3 ${principles === 3 ? '✅' : '⚠️'}`,
+                    sleep: day.sleep,
+                    exercise: day.exercise,
+                    thinking: day.thinking,
+                    insights: day.insights || [],
+                    outputs: day.outputs || [],
+                    briefing: day.briefing
+                };
+            });
+            return map;
+        }
+
+        function normalizeMood(mood) {
+            if (!mood) return 'none';
+            if (/积极|optim|happy/i.test(mood)) return 'positive';
+            if (/消极|挫败|负|sad/i.test(mood)) return 'negative';
+            return 'neutral';
+        }
 
         function getColorClass(date, view) {
             const data = dailyData[date];
@@ -179,7 +207,7 @@
                 case 'principles':
                     return `principles-${data.principles}`;
                 case 'sleep':
-                    if (data.sleep === null) return 'mood-none';
+                    if (data.sleep === null || data.sleep === undefined) return 'mood-none';
                     if (data.sleep >= 7) return 'principles-3';
                     if (data.sleep >= 6) return 'principles-2';
                     return 'principles-1';
@@ -192,25 +220,22 @@
             const calendar = document.getElementById('calendar');
             calendar.innerHTML = '';
             
-            const year = 2026;
-            const startDate = new Date(year, 0, 1); // 1月1日
-            const endDate = new Date(); // 今天
+            const year = new Date().getFullYear();
+            const startDate = new Date(year, 0, 1);
+            const endDate = new Date();
             
-            // 填充空白（对齐星期）
             const firstDayOfWeek = startDate.getDay();
             for (let i = 0; i < firstDayOfWeek; i++) {
                 const empty = document.createElement('div');
                 calendar.appendChild(empty);
             }
             
-            // 生成每一天
             for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
                 const dateStr = d.toISOString().split('T')[0];
                 const cell = document.createElement('div');
                 cell.className = `day-cell ${getColorClass(dateStr, currentView)}`;
                 cell.dataset.date = dateStr;
                 
-                // 悬浮提示
                 cell.addEventListener('mouseenter', (e) => showTooltip(e, dateStr));
                 cell.addEventListener('mouseleave', hideTooltip);
                 cell.addEventListener('click', () => showDetail(dateStr));
@@ -238,32 +263,57 @@
             document.getElementById('tooltip').classList.add('hidden');
         }
 
+        function buildBriefingPath(date) {
+            const [year, month] = date.split('-');
+            return `../briefings/${year}/${month}/${date}.md`;
+        }
+
+        function getWeekKey(dateStr) {
+            const d = new Date(`${dateStr}T00:00:00`);
+            const target = new Date(d.valueOf());
+            const dayOfWeekOffset = (d.getDay() + 6) % 7;
+            // ISO 周数：找到当周的周四作为锚点，再从当年首个周四开始计周数（ISO 8601）。
+            target.setDate(target.getDate() - dayOfWeekOffset + 3);
+            const firstThursday = new Date(target.getFullYear(), 0, 4);
+            const week = 1 + Math.round(((target - firstThursday) / MS_PER_DAY - 3 + ((firstThursday.getDay() + 6) % 7)) / 7);
+            return `${target.getFullYear()}-W${String(week).padStart(2, '0')}`;
+        }
+
         function showDetail(date) {
             const detail = document.getElementById('day-detail');
             const content = document.getElementById('detail-content');
             const dateTitle = document.getElementById('detail-date');
             const data = dailyData[date];
+            const weekKey = getWeekKey(date);
+            const weekly = weeklyBriefings[weekKey];
             
             dateTitle.textContent = date + ' 详情';
             detail.classList.remove('hidden');
             
             if (data) {
+                const briefingLink = data.briefing || buildBriefingPath(date);
                 content.innerHTML = `
-                    <div class="flex gap-4 mb-4">
+                    <div class="flex gap-3 mb-4 flex-wrap">
                         <span class="px-3 py-1 rounded bg-gray-700">情绪: ${data.moodText}</span>
                         <span class="px-3 py-1 rounded bg-gray-700">原则: ${data.principlesText}</span>
+                        <span class="px-3 py-1 rounded bg-gray-700">睡眠: ${data.sleep ?? '未记录'}</span>
+                        <span class="px-3 py-1 rounded bg-gray-700">运动: ${data.exercise ? data.exercise + 'min' : '未记录'}</span>
                     </div>
                     <div class="mb-3">
                         <h4 class="text-gray-400 text-sm mb-1">🧠 深度思考</h4>
                         <ul class="list-disc list-inside text-sm">
-                            ${data.insights.map(i => `<li>${i}</li>`).join('')}
+                            ${data.insights.length ? data.insights.map(i => `<li>${i}</li>`).join('') : '<li>暂无记录</li>'}
                         </ul>
                     </div>
-                    <div>
+                    <div class="mb-3">
                         <h4 class="text-gray-400 text-sm mb-1">📝 今日输出</h4>
                         <ul class="list-disc list-inside text-sm">
-                            ${data.outputs.map(o => `<li>${o}</li>`).join('')}
+                            ${data.outputs.length ? data.outputs.map(o => `<li>${o}</li>`).join('') : '<li>暂无记录</li>'}
                         </ul>
+                    </div>
+                    <div class="flex flex-col gap-2 text-sm">
+                        <a class="text-blue-400 hover:text-blue-300" target="_blank" href="${briefingLink}">📄 查看日简报</a>
+                        ${weekly ? `<a class="text-blue-400 hover:text-blue-300" target="_blank" href="${weekly.path}">🗂️ ${weekly.title || weekKey}</a>` : '<span class="text-gray-500">暂无对应周简报</span>'}
                     </div>
                 `;
             } else {
@@ -274,7 +324,6 @@
         function switchView(view) {
             currentView = view;
             
-            // 更新按钮状态
             ['mood', 'principles', 'sleep'].forEach(v => {
                 const btn = document.getElementById(`btn-${v}`);
                 if (v === view) {
@@ -284,10 +333,7 @@
                 }
             });
             
-            // 更新图例
             updateLegend(view);
-            
-            // 重新生成日历
             generateCalendar();
         }
 
@@ -326,8 +372,54 @@
             legend.innerHTML = legends[view];
         }
 
-        // 初始化
-        generateCalendar();
+        function updateStats() {
+            const dates = Object.keys(dailyData).sort();
+            const items = dates.map(d => dailyData[d]).filter(Boolean);
+            document.getElementById('total-days').textContent = items.length;
+            document.getElementById('positive-days').textContent = items.filter(i => i.mood === 'positive').length;
+            document.getElementById('perfect-days').textContent = items.filter(i => i.principles === 3).length;
+            document.getElementById('current-streak').textContent = calculateStreak(dates);
+        }
+
+        function calculateStreak(dates) {
+            if (!dates.length) return 0;
+            const sorted = dates.map(d => new Date(`${d}T00:00:00`)).sort((a, b) => b - a);
+            let streak = 1;
+            for (let i = 1; i < sorted.length; i++) {
+                const diff = (sorted[i - 1] - sorted[i]) / MS_PER_DAY;
+                if (diff === 1) {
+                    streak += 1;
+                } else {
+                    break;
+                }
+            }
+            return streak;
+        }
+
+        function getSampleData() {
+            return {
+                '2026-02-04': {
+                    mood: 'neutral',
+                    moodText: '理性反思',
+                    principles: 1,
+                    principlesText: '1/3 ⚠️',
+                    sleep: null,
+                    exercise: 0,
+                    insights: ['思考的价值在于收集信息、推断事实', '投资风格转变：美股→全球分散'],
+                    outputs: ['投资思考: 全球资产配置策略']
+                },
+                '2026-02-05': {
+                    mood: 'negative',
+                    moodText: '反思与挫败感',
+                    principles: 1,
+                    principlesText: '1/3 ⚠️',
+                    sleep: null,
+                    exercise: 0,
+                    insights: ['软件成本趋近于零，价值在于推理', '投资停滞、缺乏自律'],
+                    outputs: ['博客文章已发布', 'OpenClaw配置完成']
+                }
+            };
+        }
     </script>
 </body>
 </html>
