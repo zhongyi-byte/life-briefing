@@ -1,0 +1,128 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Wrangler
+        run: npm install -g wrangler
+
+      - name: Generate Dashboard
+        run: |
+          # 统计简报数量
+          TOTAL_BRIEFINGS=$(find briefings -name '*.md' 2>/dev/null | wc -l)
+          THIS_YEAR=$(date +%Y)
+          YEAR_BRIEFINGS=$(find briefings -path "*/${THIS_YEAR}/*" -name '*.md' 2>/dev/null | wc -l)
+          CURRENT_MONTH=$(date +%m)
+          
+          # 创建动态首页
+          cat > index.html << HTML_TEMPLATE
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Briefing - 生活简报</title>
+    <style>
+        :root { --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --text-muted: #94a3b8; --accent: #3b82f6; --accent-light: #60a5fa; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        header { text-align: center; margin-bottom: 40px; }
+        h1 { font-size: 2.5rem; background: linear-gradient(135deg, var(--accent), var(--accent-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+        .subtitle { color: var(--text-muted); font-size: 1.1rem; }
+        .update-time { color: var(--text-muted); margin-top: 10px; font-size: 0.9rem; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 40px; }
+        .stat-card { background: var(--card); padding: 20px; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+        .stat-number { font-size: 2rem; font-weight: bold; color: var(--accent-light); }
+        .stat-label { color: var(--text-muted); font-size: 0.9rem; margin-top: 5px; }
+        .briefing-card { background: var(--card); border-radius: 16px; padding: 30px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .briefing-date { color: var(--accent-light); font-size: 0.9rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .briefing-content { color: var(--text-muted); font-size: 0.95rem; line-height: 1.8; }
+        .tag { display: inline-block; background: rgba(59, 130, 246, 0.2); color: var(--accent-light); padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; margin-right: 8px; }
+        .footer { text-align: center; color: var(--text-muted); margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .btn { display: inline-block; background: var(--accent); color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 500; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Life Briefing</h1>
+            <p class="subtitle">自动生活简报系统 - 追踪每日工作、思考与成长</p>
+            <p class="update-time">最后更新: $(date '+%Y-%m-%d %H:%M:%S')</p>
+        </header>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">${TOTAL_BRIEFINGS}</div>
+                <div class="stat-label">总简报数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">${YEAR_BRIEFINGS}</div>
+                <div class="stat-label">今年简报</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">${CURRENT_MONTH}</div>
+                <div class="stat-label">当前月份</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">持续记录</div>
+            </div>
+        </div>
+        
+        <h2 style="margin-bottom: 20px; color: var(--text);">📅 最新简报</h2>
+HTML_TEMPLATE
+          
+          # 添加最新3篇简报
+          for file in $(ls -t briefings/*/*/*.md 2>/dev/null | head -3); do
+              date_str=$(basename "$file" .md)
+              # 提取内容前20行
+              content=$(head -20 "$file" | sed 's/</\&lt;/g; s/>/\&gt;/g')
+              cat >> index.html << BRIEFING_CARD
+        <div class="briefing-card">
+            <div class="briefing-date">📆 ${date_str}</div>
+            <div class="briefing-content"><pre style="background:transparent;border:none;color:inherit;">${content}</pre></div>
+        </div>
+BRIEFING_CARD
+          done
+          
+          cat >> index.html << 'HTML_FOOTER'
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="https://github.com/zhongyi-byte/life-briefing" class="btn">📁 查看 GitHub 仓库</a>
+        </div>
+        
+        <div class="footer">
+            <p>Built with AI · Tracked with intention</p>
+            <p style="margin-top: 10px; font-size: 0.85rem;">
+                Auto-deployed on Cloudflare Pages
+            </p>
+        </div>
+    </div>
+</body>
+</html>
+HTML_FOOTER
+
+      - name: Deploy to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          wrangler pages deploy . --project-name="life-briefing" --branch="main"
