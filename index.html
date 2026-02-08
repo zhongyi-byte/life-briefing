@@ -30,37 +30,20 @@
         <header>
             <h1>📊 Life Briefing</h1>
             <p class="subtitle">自动生活简报系统 - 追踪每日工作、思考与成长</p>
-            <p class="update-time">最后更新: HTMLEOF
-
-echo "$(date '+%Y-%m-%d %H:%M:%S')" >> index.html
-
-cat >> index.html << 'HTMLEOF2'</p>
+            <p class="update-time">最后更新: 2026-02-08 22:03:18</p>
         </header>
         
         <div class="stats">
             <div class="stat-card">
-                <div class="stat-number">HTMLEOF2
-
-# 统计简报数量
-find briefings -name '*.md' 2>/dev/null | wc -l >> index.html
-
-cat >> index.html << 'HTMLEOF3'</div>
+                <div class="stat-number">3</div>
                 <div class="stat-label">总简报数</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">HTMLEOF3
-
-find briefings -path "*/$(date +%Y)/*" -name '*.md' 2>/dev/null | wc -l >> index.html
-
-cat >> index.html << 'HTMLEOF4'</div>
+                <div class="stat-number">3</div>
                 <div class="stat-label">今年简报</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">HTMLEOF4
-
-date +%m >> index.html
-
-cat >> index.html << 'HTMLEOF5'</div>
+                <div class="stat-number">02</div>
                 <div class="stat-label">当前月份</div>
             </div>
             <div class="stat-card">
@@ -70,20 +53,91 @@ cat >> index.html << 'HTMLEOF5'</div>
         </div>
         
         <h2 style="margin-bottom: 20px; color: var(--text);">📅 最新简报</h2>
-HTMLEOF5
+        
+        <div class="briefing-card">
+            <div class="briefing-date">📆 2026-02-07</div>
+            <div class="briefing-content"><pre style="background:transparent;border:none;color:inherit;">╔═══════════════════════════════════════════════════════════╗
+║                    📅 每日简报                            ║
+╚═══════════════════════════════════════════════════════════╝
 
-# 添加最新简报
-for file in $(ls -t briefings/*/*/*.md 2>/dev/null | head -3); do
-    date_str=$(basename "$file" .md)
-    echo "        <div class=\"briefing-card\">" >> index.html
-    echo "            <div class=\"briefing-date\">📆 ${date_str}</div>" >> index.html
-    echo "            <div class=\"briefing-content\"><pre style=\"background:transparent;border:none;color:inherit;\">" >> index.html
-    head -25 "$file" >> index.html
-    echo "            </pre></div>" >> index.html
-    echo "        </div>" >> index.html
-done
+📅 日期: 2026-02-07 Saturday
+⏰ 生成时间: 2026-02-08 11:33:53 北京时间
 
-cat >> index.html << 'HTMLFOOTER'
+═══════════════════════════════════════════════════════════
+
+📔 【Obsidian 日志摘要】
+
+📝 日志内容:
+
+- ---
+- 先构建 然后删掉没用得东西
+
+transformer 就是这么来的
+
+- ---
+- 用 ai ，应该🆚不用 ai 的能力要强的多，而不是用一个 ai 的平均能力就满足了。
+引导 ai 使用上限能力，也引导自己使用上限
+- ---
+- 多参与市场，a 股，币圈，美股，都参与
+
+对各个行业也要进行监控</pre></div>
+        </div>
+        <div class="briefing-card">
+            <div class="briefing-date">📆 2026-02-04</div>
+            <div class="briefing-content"><pre style="background:transparent;border:none;color:inherit;"># 生活简报 - 2026-02-04 星期三
+
+## 📋 今日概览
+- **日期**: 2026-02-04
+- **睡眠质量**: ➖ (未记录)
+- **运动**: ➖ (未记录)
+- **情绪状态**: 🤔 理性反思
+- **原则遵循**: 1/3 ⚠️
+
+## 💼 工作进展
+- 无明确工作记录
+
+## 🧠 深度思考
+- **核心洞察**: 思考的价值在于收集信息、推断事实、找依据验证
+- **投资反思**: 从"美股无脑看多"转向全球分散配置
+- **投资反思**: 美股虽然代表顶尖科技，但"船太重、估值太高、向上空间有限、向下风险大"
+- **机会识别**: 韩国、台湾在 AI 基建供应链上地位靠前（台积电、三星、海力士）
+- **自我批评**: 去年太不坚定，做错太多，好在没亏
+
+## 💪 健康追踪
+- **睡眠**: 未记录
+- **运动**: 未记录
+- **饮食**: 未记录
+
+## 📝 今日输出</pre></div>
+        </div>
+        <div class="briefing-card">
+            <div class="briefing-date">📆 2026-02-05</div>
+            <div class="briefing-content"><pre style="background:transparent;border:none;color:inherit;"># 生活简报 - 2026-02-05 星期三
+
+## 📋 今日概览
+- **日期**: 2026-02-05
+- **睡眠质量**: ➖ (未记录)
+- **运动**: ➖ (未记录)
+- **情绪状态**: 🤔 反思与挫败感
+- **原则遵循**: 1/3 ⚠️ (想法应用化 ✅)
+
+## 💼 工作进展
+- 无明确工作记录
+
+## 🧠 深度思考
+- **核心洞察**: 软件成本趋近于零，真正的价值在于推理和科学研究
+- **核心洞察**: 信息研究：抓住感兴趣的知识，分析并产出结论
+- **投资反思**: 美股账户盈利停滞在 $8,000-$10,000，缺乏系统化交易原则
+- **自我批评**: 晚上自律几乎为零，回家就打游戏
+
+## 💪 健康追踪
+- **睡眠**: 未记录
+- **运动**: 未记录
+- **饮食**: 未记录
+
+## 📝 今日输出
+- 博客文章: 《当软件成本趋近于零，什么才是真正有价值的？》已发布</pre></div>
+        </div>
         
         <div style="text-align: center; margin-top: 30px;">
             <a href="https://github.com/zhongyi-byte/life-briefing" class="btn">📁 查看 GitHub 仓库</a>
@@ -98,9 +152,3 @@ cat >> index.html << 'HTMLFOOTER'
     </div>
 </body>
 </html>
-HTMLFOOTER
-
-echo "✅ 首页已生成"
-
-# 部署
-wrangler pages deploy . --project-name="life-briefing" --branch="main" 2>&1
