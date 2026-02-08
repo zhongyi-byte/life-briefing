@@ -5,24 +5,191 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Life Briefing - 生活简报</title>
     <style>
-        :root { --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --text-muted: #94a3b8; --accent: #3b82f6; --accent-light: #60a5fa; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        :root { 
+            --bg: #0f172a; 
+            --card: #1e293b; 
+            --text: #ffffff; 
+            --text-muted: #94a3b8; 
+            --accent: #3b82f6; 
+            --accent-light: #60a5fa;
+            --success: #10b981;
+        }
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+        
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            line-height: 1.6; 
+            min-height: 100vh;
+        }
+        
         .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
-        header { text-align: center; margin-bottom: 40px; }
-        h1 { font-size: 2.5rem; background: linear-gradient(135deg, var(--accent), var(--accent-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
-        .subtitle { color: var(--text-muted); font-size: 1.1rem; }
-        .update-time { color: var(--text-muted); margin-top: 10px; font-size: 0.9rem; }
-        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 40px; }
-        .stat-card { background: var(--card); padding: 20px; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
-        .stat-number { font-size: 2rem; font-weight: bold; color: var(--accent-light); }
-        .stat-label { color: var(--text-muted); font-size: 0.9rem; margin-top: 5px; }
-        .briefing-card { background: var(--card); border-radius: 16px; padding: 30px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); }
-        .briefing-date { color: var(--accent-light); font-size: 0.9rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-        .briefing-content { color: var(--text-muted); font-size: 0.95rem; line-height: 1.8; }
-        .tag { display: inline-block; background: rgba(59, 130, 246, 0.2); color: var(--accent-light); padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; margin-right: 8px; }
-        .footer { text-align: center; color: var(--text-muted); margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .btn { display: inline-block; background: var(--accent); color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 500; }
+        
+        header { text-align: center; margin-bottom: 50px; }
+        
+        h1 { 
+            font-size: 3rem; 
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            margin-bottom: 12px; 
+            letter-spacing: -0.02em;
+        }
+        
+        .subtitle { 
+            color: var(--text-muted); 
+            font-size: 1.2rem;
+            font-weight: 400;
+        }
+        
+        .update-time { 
+            color: var(--text-muted); 
+            margin-top: 12px; 
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+        
+        .stats { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+            gap: 20px; 
+            margin-bottom: 50px; 
+        }
+        
+        .stat-card { 
+            background: linear-gradient(145deg, var(--card), #252f47);
+            padding: 28px 20px; 
+            border-radius: 16px; 
+            text-align: center; 
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.15);
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+        
+        .stat-number { 
+            font-size: 2.5rem; 
+            font-weight: 700; 
+            color: var(--accent-light);
+            margin-bottom: 8px;
+        }
+        
+        .stat-label { 
+            color: var(--text-muted); 
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .briefing-card { 
+            background: var(--card); 
+            border-radius: 16px; 
+            padding: 28px; 
+            margin-bottom: 20px; 
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: border-color 0.2s;
+        }
+        
+        .briefing-card:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        
+        .briefing-date { 
+            color: var(--accent-light); 
+            font-size: 0.95rem; 
+            font-weight: 600;
+            margin-bottom: 16px; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+        }
+        
+        .briefing-content { 
+            color: var(--text-muted); 
+            font-size: 0.95rem; 
+            line-height: 1.8;
+        }
+        
+        .briefing-content pre {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+        }
+        
+        .btn { 
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent); 
+            color: white; 
+            padding: 14px 28px; 
+            border-radius: 10px; 
+            text-decoration: none; 
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover { 
+            background: var(--accent-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+        
+        .footer { 
+            text-align: center; 
+            color: var(--text-muted); 
+            margin-top: 60px; 
+            padding-top: 30px; 
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        
+        .footer p {
+            margin: 8px 0;
+        }
+        
+        .tag { 
+            display: inline-block; 
+            background: rgba(59, 130, 246, 0.15); 
+            color: var(--accent-light); 
+            padding: 6px 14px; 
+            border-radius: 20px; 
+            font-size: 0.85rem; 
+            font-weight: 500;
+            margin-right: 8px; 
+        }
     </style>
 </head>
 <body>
@@ -30,33 +197,37 @@
         <header>
             <h1>📊 Life Briefing</h1>
             <p class="subtitle">自动生活简报系统 - 追踪每日工作、思考与成长</p>
-            <p class="update-time">最后更新: 2026-02-08 22:03:18</p>
+            <p class="update-time">最后更新: 2026-02-08 22:28:28</p>
         </header>
         
         <div class="stats">
             <div class="stat-card">
+                <div class="stat-icon">📁</div>
                 <div class="stat-number">3</div>
                 <div class="stat-label">总简报数</div>
             </div>
             <div class="stat-card">
+                <div class="stat-icon">📅</div>
                 <div class="stat-number">3</div>
-                <div class="stat-label">今年简报</div>
+                <div class="stat-label">2026年简报</div>
             </div>
             <div class="stat-card">
+                <div class="stat-icon">📆</div>
                 <div class="stat-number">02</div>
                 <div class="stat-label">当前月份</div>
             </div>
             <div class="stat-card">
+                <div class="stat-icon">∞</div>
                 <div class="stat-number">∞</div>
                 <div class="stat-label">持续记录</div>
             </div>
         </div>
-        
-        <h2 style="margin-bottom: 20px; color: var(--text);">📅 最新简报</h2>
+
+        <h2 class="section-title">📅 最新简报</h2>
         
         <div class="briefing-card">
             <div class="briefing-date">📆 2026-02-07</div>
-            <div class="briefing-content"><pre style="background:transparent;border:none;color:inherit;">╔═══════════════════════════════════════════════════════════╗
+            <div class="briefing-content"><pre>╔═══════════════════════════════════════════════════════════╗
 ║                    📅 每日简报                            ║
 ╚═══════════════════════════════════════════════════════════╝
 
@@ -75,16 +246,12 @@
 transformer 就是这么来的
 
 - ---
-- 用 ai ，应该🆚不用 ai 的能力要强的多，而不是用一个 ai 的平均能力就满足了。
-引导 ai 使用上限能力，也引导自己使用上限
-- ---
-- 多参与市场，a 股，币圈，美股，都参与
-
-对各个行业也要进行监控</pre></div>
+- 用 ai ，应该🆚不用 ai 的能力要强的多，而不是用一个 ai 的平均能力就满足了。</pre></div>
         </div>
+        
         <div class="briefing-card">
             <div class="briefing-date">📆 2026-02-04</div>
-            <div class="briefing-content"><pre style="background:transparent;border:none;color:inherit;"># 生活简报 - 2026-02-04 星期三
+            <div class="briefing-content"><pre># 生活简报 - 2026-02-04 星期三
 
 ## 📋 今日概览
 - **日期**: 2026-02-04
@@ -103,16 +270,12 @@ transformer 就是这么来的
 - **机会识别**: 韩国、台湾在 AI 基建供应链上地位靠前（台积电、三星、海力士）
 - **自我批评**: 去年太不坚定，做错太多，好在没亏
 
-## 💪 健康追踪
-- **睡眠**: 未记录
-- **运动**: 未记录
-- **饮食**: 未记录
-
-## 📝 今日输出</pre></div>
+## 💪 健康追踪</pre></div>
         </div>
+        
         <div class="briefing-card">
             <div class="briefing-date">📆 2026-02-05</div>
-            <div class="briefing-content"><pre style="background:transparent;border:none;color:inherit;"># 生活简报 - 2026-02-05 星期三
+            <div class="briefing-content"><pre># 生活简报 - 2026-02-05 星期三
 
 ## 📋 今日概览
 - **日期**: 2026-02-05
@@ -131,22 +294,19 @@ transformer 就是这么来的
 - **自我批评**: 晚上自律几乎为零，回家就打游戏
 
 ## 💪 健康追踪
-- **睡眠**: 未记录
-- **运动**: 未记录
-- **饮食**: 未记录
-
-## 📝 今日输出
-- 博客文章: 《当软件成本趋近于零，什么才是真正有价值的？》已发布</pre></div>
+- **睡眠**: 未记录</pre></div>
         </div>
         
-        <div style="text-align: center; margin-top: 30px;">
-            <a href="https://github.com/zhongyi-byte/life-briefing" class="btn">📁 查看 GitHub 仓库</a>
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="https://github.com/zhongyi-byte/life-briefing" class="btn">
+                📁 查看 GitHub 仓库
+            </a>
         </div>
         
         <div class="footer">
             <p>Built with AI · Tracked with intention</p>
-            <p style="margin-top: 10px; font-size: 0.85rem;">
-                Auto-deployed on Cloudflare Pages
+            <p style="font-size: 0.85rem; opacity: 0.8;">
+                Auto-deployed on Cloudflare Pages · Updated hourly
             </p>
         </div>
     </div>
