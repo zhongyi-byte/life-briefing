@@ -55,11 +55,14 @@ jobs:
         git commit -m "Add briefing for $YESTERDAY" || exit 0
         git push
         
+    # Per requirement: deploy Pages artifacts to dedicated `master` branch (orphaned to avoid touching source)
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_branch: master
         publish_dir: ./docs
+        force_orphan: true
         
     - name: Send Telegram Notification
       uses: appleboy/telegram-action@master
