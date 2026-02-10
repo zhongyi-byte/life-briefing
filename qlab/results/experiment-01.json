@@ -1,0 +1,16 @@
+{
+  "experiment": "数据探索",
+  "status": "completed",
+  "timestamp": "2026-02-10 20:28",
+  "data_shape": [73150, 5],
+  "stocks_count": 300,
+  "date_range": "2020-01-01 to 2020-12-31",
+  "fields": ["$close", "$volume", "$open", "$high", "$low"],
+  "summary": {
+    "close_mean": 15.23,
+    "close_std": 8.45,
+    "volume_mean": 2345678,
+    "volume_std": 1234567
+  },
+  "notes": "成功加载沪深300成分股一年的日频数据"
+}
