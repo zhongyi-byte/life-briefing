@@ -8,7 +8,9 @@
     <style>
         .calendar-grid {
             display: grid;
-            grid-template-columns: repeat(53, 1fr);
+            grid-template-columns: repeat(53, 12px);
+            grid-template-rows: repeat(7, 12px);
+            grid-auto-flow: column;
             gap: 3px;
         }
         .day-cell {
